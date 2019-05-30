@@ -3,11 +3,14 @@ package com.zhangmen.autoconfigure;
 import com.zhangmen.etcd.jetcd.KVer;
 import com.zhangmen.etcd.jetcd.Leaser;
 import com.zhangmen.etcd.core.Register;
-import com.zhangmen.etcd.core.impl.RegisterImpl;
+import com.zhangmen.etcd.core.RegisterImpl;
 import io.etcd.jetcd.Client;
 import io.etcd.jetcd.KV;
 import io.etcd.jetcd.Lease;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +22,14 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @AllArgsConstructor
-public class RegisterAutoConfiguration {
+public class RegisterAutoConfiguration implements BeanFactoryAware {
+
+    private BeanFactory beanFactory;
 
     @Bean
     @ConditionalOnMissingBean(Client.class)
-    public Client client(ServerPropertiesBean serverPropertiesBean) {
+    public Client client() {
+        ServerPropertiesBean serverPropertiesBean = beanFactory.getBean(ServerPropertiesBean.class);
         return Client.builder().endpoints(serverPropertiesBean.getEndpoints()).build();
     }
 
@@ -44,8 +50,13 @@ public class RegisterAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(Register.class)
     public Register register(KVer kver,
-                             Leaser leaser,
-                             LeasePropertiesBean leasePropertiesBean) {
+                             Leaser leaser) {
+        LeasePropertiesBean leasePropertiesBean = beanFactory.getBean(LeasePropertiesBean.class);
         return new RegisterImpl(kver, leaser, leasePropertiesBean.getTtl());
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+
     }
 }

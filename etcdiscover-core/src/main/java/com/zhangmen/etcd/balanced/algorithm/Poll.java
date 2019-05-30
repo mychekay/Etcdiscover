@@ -24,7 +24,7 @@ public class Poll implements BalancedAlgorithm {
     }
 
     @Override
-    public Instance apply(Collection<AbstractInstance> instances) {
+    public Instance apply(String serviceName, Collection<AbstractInstance> instances) {
         return null;
     }
 

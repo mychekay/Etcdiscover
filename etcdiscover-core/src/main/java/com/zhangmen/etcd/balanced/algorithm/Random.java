@@ -3,7 +3,9 @@ package com.zhangmen.etcd.balanced.algorithm;
 import com.zhangmen.etcd.bean.AbstractInstance;
 import com.zhangmen.etcd.bean.Instance;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Copyright© 2019
@@ -20,8 +22,11 @@ public class Random implements BalancedAlgorithm {
     private Random() {
     }
 
+    private List<AbstractInstance> instanceList = new ArrayList<>();
+
     @Override
-    public Instance apply(Collection<AbstractInstance> instances) {
+    public Instance apply(String serviceName, Collection<AbstractInstance> instances) {
+
         return null;
     }
 }

@@ -1,10 +1,9 @@
-package com.zhangmen.etcd.core.impl;
+package com.zhangmen.etcd.core;
 
 import com.zhangmen.etcd.bean.AbstractInstance;
+import com.zhangmen.etcd.consts.ServiceKeyPrefix;
 import com.zhangmen.etcd.jetcd.KVer;
 import com.zhangmen.etcd.jetcd.Leaser;
-import com.zhangmen.etcd.consts.ServiceKeyPrefix;
-import com.zhangmen.etcd.core.Register;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Timer;

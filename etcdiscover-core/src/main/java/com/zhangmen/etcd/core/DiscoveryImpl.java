@@ -1,12 +1,10 @@
-package com.zhangmen.etcd.core.impl;
+package com.zhangmen.etcd.core;
 
 import com.zhangmen.etcd.balanced.BalancedStrategy;
 import com.zhangmen.etcd.balanced.algorithm.BalancedAlgorithm;
 import com.zhangmen.etcd.bean.AbstractInstance;
 import com.zhangmen.etcd.bean.Instance;
 import com.zhangmen.etcd.consts.ServiceKeyPrefix;
-import com.zhangmen.etcd.core.Discovery;
-import com.zhangmen.etcd.core.repo.InstanceRepository;
 import com.zhangmen.etcd.jetcd.KVer;
 import com.zhangmen.etcd.jetcd.Watcher;
 import io.etcd.jetcd.Watch;
