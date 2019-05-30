@@ -9,8 +9,8 @@ import com.zhangmen.etcd.bean.AbstractInstance;
  * Author jie.han
  * Created on 2019-05-28
  */
-public interface Discovery {
-    AbstractInstance discover(String serviceName, BalancedAlgorithm custom);
+public interface Discovery<T extends AbstractInstance> {
+    T discover(String serviceName, BalancedAlgorithm custom);
 
-    AbstractInstance discover(String serviceName, BalancedStrategy balancedStrategy);
+    T discover(String serviceName, BalancedStrategy balancedStrategy);
 }

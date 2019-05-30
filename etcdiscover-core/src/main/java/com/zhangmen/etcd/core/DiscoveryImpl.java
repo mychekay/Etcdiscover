@@ -1,5 +1,6 @@
 package com.zhangmen.etcd.core;
 
+import com.zhangmen.etcd.NoBug;
 import com.zhangmen.etcd.balanced.BalancedStrategy;
 import com.zhangmen.etcd.balanced.algorithm.BalancedAlgorithm;
 import com.zhangmen.etcd.bean.AbstractInstance;
@@ -23,12 +24,13 @@ import java.util.function.Consumer;
  * Created on 2019-05-28
  */
 @Slf4j
-public class DiscoveryImpl implements Discovery {
+@NoBug
+public class DiscoveryImpl implements Discovery<Instance> {
     private ConcurrentHashMap<String, InstanceRepository> instanceTable = new ConcurrentHashMap<>(1 << 8);
-    private KVer kVer;
+    private KVer<Instance> kVer;
     private Watcher watcher;
 
-    public DiscoveryImpl(KVer kVer, Watcher watcher) {
+    public DiscoveryImpl(KVer<Instance> kVer, Watcher watcher) {
         this.kVer = kVer;
         this.watcher = watcher;
         initInstances();
@@ -38,7 +40,7 @@ public class DiscoveryImpl implements Discovery {
 
     private void initInstances() {
         try {
-            Set<AbstractInstance> all = kVer.getAll();
+            Set<Instance> all = kVer.getAll();
             for (AbstractInstance instance : all) {
                 this.instanceTable.compute(instance.getServiceName(), (serviceName, repository) -> {
                     if (repository == null) repository = new InstanceRepository(serviceName);
@@ -52,9 +54,9 @@ public class DiscoveryImpl implements Discovery {
     }
 
     @Override
-    public AbstractInstance discover(String serviceName, BalancedAlgorithm balancedAlgorithm) {
+    public Instance discover(String serviceName, BalancedAlgorithm balancedAlgorithm) {
         try {
-            return this.instanceTable.get(serviceName).findByAlgorithm(serviceName, balancedAlgorithm);
+            return (Instance) this.instanceTable.get(serviceName).findByAlgorithm(serviceName, balancedAlgorithm);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return null;
@@ -62,9 +64,9 @@ public class DiscoveryImpl implements Discovery {
     }
 
     @Override
-    public AbstractInstance discover(String serviceName, BalancedStrategy balancedStrategy) {
+    public Instance discover(String serviceName, BalancedStrategy balancedStrategy) {
         try {
-            return this.instanceTable.get(serviceName).findByAlgorithm(serviceName, balancedStrategy.getAlgorithmHandler());
+            return (Instance) this.instanceTable.get(serviceName).findByAlgorithm(serviceName, balancedStrategy.getAlgorithmHandler());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return null;
