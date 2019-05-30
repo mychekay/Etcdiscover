@@ -13,5 +13,6 @@
         <module>etcdiscover-core</module>
         <module>etcdiscover-discover-springboot</module>
         <module>etcdiscover-register-springboot</module>
+        <module>etcdiscvoer-example</module>
     </modules>
 </project>
