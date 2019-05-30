@@ -1,5 +1,6 @@
 package com.angee.autoconfigure;
 
+import com.angee.etcd.bean.Instance;
 import com.angee.etcd.core.Register;
 import com.angee.etcd.core.RegisterImpl;
 import com.angee.etcd.jetcd.KVer;
@@ -10,15 +11,15 @@ import io.etcd.jetcd.Lease;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-
+import org.springframework.context.annotation.Import;
 
 /**
  * Copyright© 2019
  * Author jie.han
  * Created on 2019-05-28
  */
-@Configuration
+@Configuration("registerAutoConfiguration")
+@Import({KVPropertiesBean.class, LeasePropertiesBean.class, ServerPropertiesBean.class})
 public class RegisterAutoConfiguration {
     private final ServerPropertiesBean serverPropertiesBean;
     private final LeasePropertiesBean leasePropertiesBean;
@@ -36,9 +37,9 @@ public class RegisterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(KVer.class)
-    public KVer kver(Client client) {
+    public KVer<Instance> kver(Client client) {
         KV kv = client.getKVClient();
-        return new KVer(kv);
+        return new KVer<>(kv);
     }
 
     @Bean
@@ -50,7 +51,7 @@ public class RegisterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(Register.class)
-    public Register register(KVer kver,
+    public Register<Instance> register(KVer<Instance> kver,
                              Leaser leaser) {
         return new RegisterImpl(kver, leaser, leasePropertiesBean.getTtl());
     }

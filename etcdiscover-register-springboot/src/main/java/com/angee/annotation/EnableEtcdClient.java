@@ -1,9 +1,7 @@
 package com.angee.annotation;
 
-import com.angee.autoconfigure.LeasePropertiesBean;
 import com.angee.autoconfigure.RegisterAutoConfiguration;
-import com.angee.autoconfigure.ServerPropertiesBean;
-import com.angee.register.Bootstrap;
+import com.angee.starter.Bootstrap;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -16,7 +14,7 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Import({ServerPropertiesBean.class, LeasePropertiesBean.class, RegisterAutoConfiguration.class, Bootstrap.class})
+@Import({RegisterAutoConfiguration.class, Bootstrap.class})
 public @interface EnableEtcdClient {
     String serviceName() default "";
 }

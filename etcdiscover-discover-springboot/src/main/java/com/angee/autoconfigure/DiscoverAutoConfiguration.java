@@ -38,7 +38,7 @@ public class DiscoverAutoConfiguration implements BeanFactoryAware {
     @ConditionalOnMissingBean(KVer.class)
     public KVer kver(Client client) {
         KV kv = client.getKVClient();
-        return new KVer(kv);
+        return new KVer<>(kv);
     }
 
     @Bean

@@ -40,7 +40,7 @@ public class DiscoveryImpl implements Discovery<Instance> {
 
     private void initInstances() {
         try {
-            Set<Instance> all = kVer.getAll();
+            Set<Instance> all = kVer.getAll(Instance.class);
             for (AbstractInstance instance : all) {
                 this.instanceTable.compute(instance.getServiceName(), (serviceName, repository) -> {
                     if (repository == null) repository = new InstanceRepository(serviceName);

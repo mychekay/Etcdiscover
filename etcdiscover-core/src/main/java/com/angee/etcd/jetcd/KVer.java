@@ -12,7 +12,6 @@ import io.etcd.jetcd.options.PutOption;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,14 +27,10 @@ import static com.angee.etcd.util.ByteSequenceUtil.fromString;
  */
 @Slf4j
 public class KVer<T extends AbstractInstance> {
-    private Class<T> tClass;
-
     private KV kv;
 
     public KVer(KV kv) {
         this.kv = kv;
-        Type t = getClass().getGenericSuperclass();
-//        this.tClass = (Class<T>)((ParameterizedType)t);
     }
 
     public void put(String key, T instance) throws ExecutionException, InterruptedException {
@@ -67,7 +62,7 @@ public class KVer<T extends AbstractInstance> {
         kv.delete(fromString(key)).get();
     }
 
-    public Set<T> getAll() throws ExecutionException, InterruptedException {
+    public Set<T> getAll(Class<T> targetClass) throws ExecutionException, InterruptedException {
         ByteSequence key = fromString("\0");
         GetOption getOption = GetOption.newBuilder()
                 .withRange(fromString("\0"))
@@ -79,7 +74,7 @@ public class KVer<T extends AbstractInstance> {
         else {
             Set<T> instances = new HashSet<>();
             for (KeyValue keyValue : keyValueList) {
-                T instance = AbstractInstance.fromByteSequence(keyValue, tClass);
+                T instance = AbstractInstance.fromByteSequence(keyValue, targetClass);
                 if (instance == null) continue;
                 instances.add(instance);
             }

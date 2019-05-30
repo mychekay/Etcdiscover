@@ -12,7 +12,7 @@ import java.util.Set;
  * Author jie.han
  * Created on 2019-05-30
  */
-public class AbstractRepository implements Repository {
+public abstract class AbstractRepository implements Repository {
     protected Set<AbstractInstance> instanceSet = new HashSet<>(32);
     protected String serviceName;
 
