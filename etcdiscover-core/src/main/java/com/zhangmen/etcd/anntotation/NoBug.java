@@ -1,4 +1,4 @@
-package com.zhangmen.etcd;
+package com.zhangmen.etcd.anntotation;
 
 import java.lang.annotation.*;
 

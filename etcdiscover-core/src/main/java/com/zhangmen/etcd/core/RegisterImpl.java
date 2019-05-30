@@ -1,6 +1,6 @@
 package com.zhangmen.etcd.core;
 
-import com.zhangmen.etcd.NoBug;
+import com.zhangmen.etcd.anntotation.NoBug;
 import com.zhangmen.etcd.bean.Instance;
 import com.zhangmen.etcd.consts.ServiceKeyPrefix;
 import com.zhangmen.etcd.jetcd.KVer;

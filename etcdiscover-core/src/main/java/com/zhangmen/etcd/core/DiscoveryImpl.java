@@ -1,6 +1,6 @@
 package com.zhangmen.etcd.core;
 
-import com.zhangmen.etcd.NoBug;
+import com.zhangmen.etcd.anntotation.NoBug;
 import com.zhangmen.etcd.balanced.BalancedStrategy;
 import com.zhangmen.etcd.balanced.algorithm.BalancedAlgorithm;
 import com.zhangmen.etcd.bean.AbstractInstance;
