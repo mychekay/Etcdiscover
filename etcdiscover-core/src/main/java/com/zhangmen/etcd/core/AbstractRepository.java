@@ -4,8 +4,8 @@ import com.zhangmen.etcd.balanced.algorithm.BalancedAlgorithm;
 import com.zhangmen.etcd.bean.AbstractInstance;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Copyright© 2019
@@ -13,7 +13,7 @@ import java.util.Map;
  * Created on 2019-05-30
  */
 public class AbstractRepository implements Repository {
-    protected Map<String, AbstractInstance> instanceMap = new HashMap<>(32);
+    protected Set<AbstractInstance> instanceSet = new HashSet<>(32);
     protected String serviceName;
 
     @Override

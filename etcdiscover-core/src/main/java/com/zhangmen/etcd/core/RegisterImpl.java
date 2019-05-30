@@ -1,10 +1,10 @@
-package com.zhangmen.etcd.core.impl;
+package com.zhangmen.etcd.core;
 
-import com.zhangmen.etcd.bean.AbstractInstance;
+import com.zhangmen.etcd.anntotation.NoBug;
+import com.zhangmen.etcd.bean.Instance;
+import com.zhangmen.etcd.consts.ServiceKeyPrefix;
 import com.zhangmen.etcd.jetcd.KVer;
 import com.zhangmen.etcd.jetcd.Leaser;
-import com.zhangmen.etcd.consts.ServiceKeyPrefix;
-import com.zhangmen.etcd.core.Register;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Timer;
@@ -17,19 +17,20 @@ import java.util.concurrent.ExecutionException;
  * Created on 2019-05-28
  */
 @Slf4j
-public class RegisterImpl implements Register {
-    private KVer kVer;
+@NoBug
+public class RegisterImpl implements Register<Instance> {
+    private KVer<Instance> kVer;
     private Leaser leaser;
     private long ttl;
 
-    public RegisterImpl(KVer kVer, Leaser leaser, long ttl) {
+    public RegisterImpl(KVer<Instance> kVer, Leaser leaser, long ttl) {
         this.kVer = kVer;
         this.leaser = leaser;
         this.ttl = ttl;
     }
 
     @Override
-    public boolean register(String serviceName, AbstractInstance instance) {
+    public boolean register(String serviceName, Instance instance) {
         try {
             instance.setServiceName(serviceName);
             long leaseID = leaser.grant(ttl);
@@ -54,7 +55,7 @@ public class RegisterImpl implements Register {
     }
 
     @Override
-    public boolean update(String serviceName, AbstractInstance instance) {
+    public boolean update(String serviceName, Instance instance) {
         try {
             instance.setServiceName(serviceName);
             kVer.put(ServiceKeyPrefix.prefix + serviceName, instance);
@@ -66,7 +67,7 @@ public class RegisterImpl implements Register {
     }
 
     @Override
-    public boolean unReg(String serviceName, AbstractInstance instance) {
+    public boolean unReg(String serviceName, Instance instance) {
         try {
             kVer.delete(ServiceKeyPrefix.prefix + serviceName);
             return true;

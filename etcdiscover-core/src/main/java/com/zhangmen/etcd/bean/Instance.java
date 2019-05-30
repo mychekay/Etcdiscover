@@ -3,9 +3,7 @@ package com.zhangmen.etcd.bean;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import io.etcd.jetcd.KeyValue;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Copyright© 2019
@@ -13,17 +11,7 @@ import org.apache.commons.lang3.StringUtils;
  * Created on 2019-05-28
  */
 @Slf4j
-@Data
-public class Instance extends AbstractInstance implements Comparable<String> {
-    private String weight;
-
-    @Override
-    public int compareTo(String weight) {
-        if (StringUtils.isEmpty(weight) && StringUtils.isEmpty(this.weight)) return 0;
-        else if (StringUtils.isEmpty(weight)) return -1;
-        else if (StringUtils.isEmpty(this.weight)) return 1;
-        else return this.weight.compareTo(weight);
-    }
+public class Instance extends AbstractInstance {
 
     public static Instance fromByteSequence(KeyValue keyValue) {
         try {

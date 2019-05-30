@@ -1,8 +1,6 @@
 package com.zhangmen.etcd.balanced;
 
-import com.zhangmen.etcd.balanced.algorithm.BalancedAlgorithm;
-import com.zhangmen.etcd.balanced.algorithm.Poll;
-import com.zhangmen.etcd.balanced.algorithm.Random;
+import com.zhangmen.etcd.balanced.algorithm.*;
 import lombok.Getter;
 
 /**
@@ -19,7 +17,17 @@ public enum BalancedStrategy {
     /**
      * 随机
      */
-    RANDOM(Random.getInstance());
+    RANDOM(Random.getInstance()),
+
+    /**
+     * 哈希
+     */
+    HASH(Hash.getInstance()),
+
+    /**
+     * 一致性哈希
+     */
+    CONSITENT_HASH(ConsistentHash.getInstance());
 
     @Getter
     private BalancedAlgorithm balancedAlgorithm;

@@ -1,8 +1,7 @@
-package com.zhangmen.etcd.core.repo;
+package com.zhangmen.etcd.core;
 
 import com.zhangmen.etcd.balanced.algorithm.BalancedAlgorithm;
 import com.zhangmen.etcd.bean.AbstractInstance;
-import com.zhangmen.etcd.core.AbstractRepository;
 import lombok.NonNull;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -17,7 +16,7 @@ import java.util.List;
  */
 @NotThreadSafe
 public class InstanceRepository extends AbstractRepository {
-    private List<String> instanceIdList ;
+    private List<String> instanceIdList;
 
     public InstanceRepository(String serviceName) {
         this.serviceName = serviceName;
@@ -26,32 +25,30 @@ public class InstanceRepository extends AbstractRepository {
 
     @Override
     public boolean add(@NonNull AbstractInstance instance) {
-        String instanceID = instance.getInstanceID();
-        if (instanceMap.containsKey(instanceID))
+        if (instanceSet.contains(instance))
             return true;
-        instanceIdList.add(instanceID);
-        instanceMap.put(instanceID, instance);
+        instanceIdList.add(instance.getInstanceID());
+        instanceSet.add(instance);
         return true;
     }
 
     @Override
     public boolean remove(@NonNull AbstractInstance instance) {
-        String instanceID = instance.getInstanceID();
-        if (!instanceMap.containsKey(instanceID))
+        if (!instanceSet.contains(instance))
             return true;
-        instanceIdList.remove(instanceID);
-        instanceMap.remove(instanceID);
+        instanceIdList.remove(instance.getInstanceID());
+        instanceSet.remove(instance);
         return true;
     }
 
     @Override
     public AbstractInstance findByAlgorithm(String serviceName, BalancedAlgorithm balancedAlgorithm) {
-        return null;
+        return balancedAlgorithm.apply(serviceName, instanceSet);
     }
 
     @Override
     public Collection<AbstractInstance> findAll(String serviceName) {
-        return instanceMap.values();
+        return instanceSet;
     }
 
 }

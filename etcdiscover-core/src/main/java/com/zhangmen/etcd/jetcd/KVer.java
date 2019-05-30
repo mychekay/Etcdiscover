@@ -28,7 +28,7 @@ import static com.zhangmen.etcd.util.ByteSequenceUtil.fromString;
  */
 @Slf4j
 public class KVer<T extends AbstractInstance> {
-    private Class<T> tClass = (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];;
+    private Class<T> tClass = (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 
     private KV kv;
 

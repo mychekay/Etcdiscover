@@ -11,5 +11,5 @@ import java.util.Collection;
  */
 @FunctionalInterface
 public interface BalancedAlgorithm {
-    AbstractInstance apply(Collection<AbstractInstance> instances);
+    AbstractInstance apply(String serviceName, Collection<AbstractInstance> instances);
 }

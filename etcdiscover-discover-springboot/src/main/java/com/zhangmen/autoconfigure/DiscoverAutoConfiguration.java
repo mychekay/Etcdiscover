@@ -3,11 +3,14 @@ package com.zhangmen.autoconfigure;
 import com.zhangmen.etcd.jetcd.KVer;
 import com.zhangmen.etcd.jetcd.Watcher;
 import com.zhangmen.etcd.core.Discovery;
-import com.zhangmen.etcd.core.impl.DiscoveryImpl;
+import com.zhangmen.etcd.core.DiscoveryImpl;
 import io.etcd.jetcd.Client;
 import io.etcd.jetcd.KV;
 import io.etcd.jetcd.Watch;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -20,11 +23,14 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @AllArgsConstructor
-public class DiscoverAutoConfiguration {
+public class DiscoverAutoConfiguration implements BeanFactoryAware {
+
+    private BeanFactory beanFactory;
 
     @Bean
     @ConditionalOnMissingBean(Client.class)
-    public Client client(ServerPropertiesBean serverPropertiesBean) {
+    public Client client() {
+        ServerPropertiesBean serverPropertiesBean = beanFactory.getBean(ServerPropertiesBean.class);
         return Client.builder().endpoints(serverPropertiesBean.getEndpoints()).build();
     }
 
@@ -49,4 +55,8 @@ public class DiscoverAutoConfiguration {
         return new DiscoveryImpl(kv, watch);
     }
 
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
+    }
 }
