@@ -32,23 +32,11 @@ public class RegisterImpl implements Register<Instance> {
     @Override
     public boolean register(String serviceName, Instance instance) {
         try {
-            instance.setServiceName(serviceName);
             long leaseID = leaser.grant(ttl);
             kVer.put(ServiceKeyPrefix.prefix + serviceName, instance, leaseID);
-            //续租
-            Timer timer = new Timer(true);
-            timer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        leaser.keepAliveOnce(leaseID);
-                    } catch (ExecutionException | InterruptedException e) {
-                        log.error(e.getMessage(), e);
-                    }
-                }
-            }, ttl * 1000 / 2, ttl * 1000 / 2);
+            this.keepLease(leaseID);
             return true;
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
         return false;
@@ -57,10 +45,9 @@ public class RegisterImpl implements Register<Instance> {
     @Override
     public boolean update(String serviceName, Instance instance) {
         try {
-            instance.setServiceName(serviceName);
             kVer.put(ServiceKeyPrefix.prefix + serviceName, instance);
             return true;
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
         return false;
@@ -75,6 +62,22 @@ public class RegisterImpl implements Register<Instance> {
             log.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    private boolean keepLease(long leaseID) {
+        //续租
+        Timer timer = new Timer(true);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    leaser.keepAliveOnce(leaseID);
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        }, ttl * 1000 / 2, ttl * 1000 / 2);
+        return true;
     }
 
 }

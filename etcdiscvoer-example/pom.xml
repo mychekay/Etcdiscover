@@ -9,8 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.angee</groupId>
-	<artifactId>etcdiscvoer-example</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>etcdiscvoer-example-register</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>etcdiscvoer-example</name>
 	<description>Demo project for Spring Boot</description>
 
@@ -21,15 +21,18 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.angee</groupId>
-			<artifactId>record-etcd-register-springboot</artifactId>
-			<version>1.0.0</version>
+			<artifactId>etcdiscover-register-springboot</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.angee</groupId>
+			<artifactId>etcdiscover-discover-springboot</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

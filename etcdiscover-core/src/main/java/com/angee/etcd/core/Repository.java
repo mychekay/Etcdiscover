@@ -13,6 +13,8 @@ import java.util.Collection;
 public interface Repository {
     boolean add(AbstractInstance instance);
 
+    boolean addAll(Collection<AbstractInstance> instances);
+
     boolean remove(AbstractInstance instance);
 
     AbstractInstance findByAlgorithm(String serviceName, BalancedAlgorithm balancedAlgorithm);
