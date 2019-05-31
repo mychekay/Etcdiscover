@@ -6,6 +6,7 @@ import com.angee.etcd.balanced.algorithm.BalancedAlgorithm;
 import com.angee.etcd.bean.AbstractInstance;
 import com.angee.etcd.bean.Instance;
 import com.angee.etcd.consts.ServiceKeyPrefix;
+import com.angee.etcd.health.AutoRefresh;
 import com.angee.etcd.jetcd.KVer;
 import com.angee.etcd.jetcd.Watcher;
 import io.etcd.jetcd.Watch;
@@ -13,9 +14,10 @@ import io.etcd.jetcd.watch.WatchEvent;
 import io.etcd.jetcd.watch.WatchResponse;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 /**
@@ -25,31 +27,34 @@ import java.util.function.Consumer;
  */
 @Slf4j
 @NoBug
-public class DiscoveryImpl implements Discovery<Instance> {
+public class DiscoveryImpl implements Discovery<Instance>, AutoRefresh {
     private ConcurrentHashMap<String, InstanceRepository> instanceTable = new ConcurrentHashMap<>(1 << 8);
     private KVer<Instance> kVer;
     private Watcher watcher;
+    private DiscoverHealthCheckConfig discoverHealthCheckConfig;
 
-    public DiscoveryImpl(KVer<Instance> kVer, Watcher watcher) {
+    public DiscoveryImpl(KVer<Instance> kVer,
+                         Watcher watcher,
+                         DiscoverHealthCheckConfig discoverHealthCheckConfig) {
         this.kVer = kVer;
         this.watcher = watcher;
-        initInstances();
-        listenAll();
-        System.out.println(instanceTable);
+        this.discoverHealthCheckConfig = discoverHealthCheckConfig;
+        afterConstruct();
     }
 
-    private void initInstances() {
-        try {
-            Set<Instance> all = kVer.getAll(Instance.class);
-            for (AbstractInstance instance : all) {
-                this.instanceTable.compute(instance.getServiceName(), (serviceName, repository) -> {
-                    if (repository == null) repository = new InstanceRepository(serviceName);
-                    repository.add(instance);
-                    return repository;
-                });
-            }
-        } catch (ExecutionException | InterruptedException e) {
-            log.error(e.getMessage(), e);
+    private void afterConstruct() {
+        this.refresh();
+        this.listenAll();
+    }
+
+    private void updateInstancesTb(Collection<Instance> instances) {
+        if (null == instances) return;
+        for (AbstractInstance instance : instances) {
+            this.instanceTable.compute(instance.getServiceName(), (serviceName, repository) -> {
+                if (repository == null) repository = new InstanceRepository(serviceName);
+                repository.add(instance);
+                return repository;
+            });
         }
     }
 
@@ -73,8 +78,9 @@ public class DiscoveryImpl implements Discovery<Instance> {
         }
     }
 
+    //TODO need test
     void listenAll() {
-        listen(ServiceKeyPrefix.prefix, listener());
+        this.listen(ServiceKeyPrefix.prefix, listener());
     }
 
     public void listen(String commonServiceNamePrefix, Watch.Listener listener) {
@@ -104,5 +110,36 @@ public class DiscoveryImpl implements Discovery<Instance> {
         Consumer<Throwable> onError = throwable -> log.error(throwable.getMessage(), throwable);
         Runnable onCompleted = () -> log.info("on complete");
         return Watch.listener(onNext, onError, onCompleted);
+    }
+
+    @Override
+    public void refresh() {
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                DiscoveryImpl.this.updateInstancesTb(kVer.getAll(Instance.class));
+            }
+        }, discoverHealthCheckConfig.getDelay(), discoverHealthCheckConfig.getPeriod());
+    }
+
+    public static class DiscoverHealthCheckConfig {
+        private long delay = 0;
+        private long period = 10 * 1000;
+
+        public long getDelay() {
+            return delay;
+        }
+
+        public void setDelay(long delay) {
+            this.delay = delay;
+        }
+
+        public long getPeriod() {
+            return period;
+        }
+
+        public void setPeriod(long period) {
+            this.period = period;
+        }
     }
 }

@@ -4,6 +4,7 @@ import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
  * Created on 2019-05-28
  */
 @Configuration
+@Import(RestClientProperties.class)
 public class RestClientConfig {
 
     @Bean

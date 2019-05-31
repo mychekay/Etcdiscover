@@ -1,4 +1,4 @@
-package com.angee.etcdiscvoerexample;
+package com.angee.example;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,10 +7,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class EtcdiscvoerExampleApplicationTests {
+public class RegisterExampleApplicationTests {
 
 	@Test
 	public void contextLoads() {
+
 	}
 
 }

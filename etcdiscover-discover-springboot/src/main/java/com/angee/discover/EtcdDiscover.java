@@ -2,12 +2,10 @@ package com.angee.discover;
 
 import com.angee.etcd.balanced.BalancedStrategy;
 import com.angee.etcd.bean.Instance;
-import com.angee.etcd.exception.NotFoundServiceException;
 import com.angee.etcd.core.Discovery;
+import com.angee.etcd.exception.NotFoundServiceException;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -15,19 +13,19 @@ import org.springframework.web.client.RestTemplate;
  * Author jie.han
  * Created on 2019-05-28
  */
-@Component
 public class EtcdDiscover<T, R> {
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+    private final Discovery<Instance> discovery;
 
-    @Autowired
-    private Discovery discovery;
+    public EtcdDiscover(RestTemplate restTemplate, Discovery<Instance> discovery) {
+        this.restTemplate = restTemplate;
+        this.discovery = discovery;
+    }
 
     public ResponseEntity<R> post(String serviceName, String uri, T t, Class<R> responseType, BalancedStrategy balancedStrategy) throws NotFoundServiceException {
-        Instance instance = (Instance) discovery.discover(serviceName, balancedStrategy);
-        if (instance == null) {
+        Instance instance = discovery.discover(serviceName, balancedStrategy);
+        if (instance == null)
             throw new NotFoundServiceException("not found service " + serviceName);
-        }
         String url = Protocol.HTTP.getHead() + instance.getHost() + ":" + instance.getPort() + uri;
         return restTemplate.postForEntity(url, t, responseType);
     }

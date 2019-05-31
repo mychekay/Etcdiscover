@@ -3,9 +3,8 @@ package com.angee.etcd.balanced.algorithm;
 import com.angee.etcd.bean.AbstractInstance;
 import com.angee.etcd.bean.Instance;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Iterator;
 
 /**
  * Copyright© 2019
@@ -22,11 +21,15 @@ public class Random implements BalancedAlgorithm {
     private Random() {
     }
 
-    private List<AbstractInstance> instanceList = new ArrayList<>();
-
     @Override
     public Instance apply(String serviceName, Collection<AbstractInstance> instances) {
-
-        return null;
+        int randomIndex = new java.util.Random().nextInt(instances.size());
+        Iterator<AbstractInstance> instanceIterator = instances.iterator();
+        AbstractInstance target = null;
+        while (instanceIterator.hasNext()) {
+            target = instanceIterator.next();
+            if (randomIndex-- == 0) break;
+        }
+        return (Instance) target;
     }
 }

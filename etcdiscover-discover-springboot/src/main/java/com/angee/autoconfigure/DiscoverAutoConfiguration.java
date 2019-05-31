@@ -1,20 +1,18 @@
 package com.angee.autoconfigure;
 
-import com.angee.etcd.jetcd.KVer;
-import com.angee.etcd.jetcd.Watcher;
 import com.angee.etcd.core.Discovery;
 import com.angee.etcd.core.DiscoveryImpl;
+import com.angee.etcd.jetcd.KVer;
+import com.angee.etcd.jetcd.Watcher;
 import io.etcd.jetcd.Client;
 import io.etcd.jetcd.KV;
 import io.etcd.jetcd.Watch;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  * Copyright© 2019
@@ -23,14 +21,14 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @AllArgsConstructor
-public class DiscoverAutoConfiguration implements BeanFactoryAware {
-
-    private BeanFactory beanFactory;
+@Import({ServerPropertiesBean.class, DiscoveryImpl.DiscoverHealthCheckConfig.class})
+public class DiscoverAutoConfiguration {
+    private final ServerPropertiesBean serverPropertiesBean;
+    private final DiscoveryImpl.DiscoverHealthCheckConfig discoverHealthCheckConfig;
 
     @Bean
     @ConditionalOnMissingBean(Client.class)
     public Client client() {
-        ServerPropertiesBean serverPropertiesBean = beanFactory.getBean(ServerPropertiesBean.class);
         return Client.builder().endpoints(serverPropertiesBean.getEndpoints()).build();
     }
 
@@ -52,11 +50,7 @@ public class DiscoverAutoConfiguration implements BeanFactoryAware {
     @ConditionalOnBean({KVer.class, Watcher.class})
     @ConditionalOnMissingBean(Discovery.class)
     public Discovery discovery(KVer kv, Watcher watch) {
-        return new DiscoveryImpl(kv, watch);
+        return new DiscoveryImpl(kv, watch, discoverHealthCheckConfig);
     }
 
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
-    }
 }

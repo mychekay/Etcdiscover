@@ -5,9 +5,9 @@ import com.angee.etcd.bean.AbstractInstance;
 import lombok.NonNull;
 
 import javax.annotation.concurrent.NotThreadSafe;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Copyright© 2019
@@ -16,27 +16,27 @@ import java.util.List;
  */
 @NotThreadSafe
 public class InstanceRepository extends AbstractRepository {
-    private List<String> instanceIdList;
+    private Set<AbstractInstance> instanceSet = new HashSet<>(32);
+    private String serviceName = "";
 
     public InstanceRepository(String serviceName) {
         this.serviceName = serviceName;
-        this.instanceIdList = new ArrayList<>(32);
     }
 
     @Override
     public boolean add(@NonNull AbstractInstance instance) {
-        if (instanceSet.contains(instance))
-            return true;
-        instanceIdList.add(instance.getInstanceID());
         instanceSet.add(instance);
         return true;
     }
 
     @Override
+    public boolean addAll(Collection<AbstractInstance> instances) {
+        instanceSet.addAll(instances);
+        return false;
+    }
+
+    @Override
     public boolean remove(@NonNull AbstractInstance instance) {
-        if (!instanceSet.contains(instance))
-            return true;
-        instanceIdList.remove(instance.getInstanceID());
         instanceSet.remove(instance);
         return true;
     }
@@ -51,4 +51,8 @@ public class InstanceRepository extends AbstractRepository {
         return instanceSet;
     }
 
+    @Override
+    public String getServiceName() {
+        return this.serviceName;
+    }
 }

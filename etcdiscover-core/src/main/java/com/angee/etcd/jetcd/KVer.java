@@ -2,6 +2,7 @@ package com.angee.etcd.jetcd;
 
 import com.angee.etcd.bean.AbstractInstance;
 import com.angee.etcd.consts.ServiceKeyPrefix;
+import com.angee.etcd.util.Serializer;
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.KV;
 import io.etcd.jetcd.KeyValue;
@@ -33,17 +34,20 @@ public class KVer<T extends AbstractInstance> {
         this.kv = kv;
     }
 
-    public void put(String key, T instance) throws ExecutionException, InterruptedException {
+    public void put(String key, T instance) throws Exception {
         if (key == null || instance == null) {
             throw new NullPointerException("null key or weight");
         }
         PutOption putOption = PutOption.newBuilder()
                 .withPrevKV()
                 .build();
-        kv.put(fromString(key), fromString(instance.toString()), putOption).get();
+        ByteSequence sequenceKey = fromString(key);
+        ByteSequence sequenceVal = fromString(new Serializer(Serializer.Scheme.FAST_JSON).serialize(instance));
+        PutResponse putResponse = kv.put(sequenceKey, sequenceVal, putOption).get();
+        log.info(putResponse.toString());
     }
 
-    public void put(String key, T instance, long leaseID) throws ExecutionException, InterruptedException {
+    public void put(String key, T instance, long leaseID) throws Exception {
         if (key == null || instance == null) {
             throw new NullPointerException("null key or weight");
         }
@@ -51,7 +55,9 @@ public class KVer<T extends AbstractInstance> {
                 .withLeaseId(leaseID)
                 .withPrevKV()
                 .build();
-        PutResponse putResponse = kv.put(fromString(key), fromString(instance.toString()), putOption).get();
+        ByteSequence sequenceKey = fromString(key);
+        ByteSequence sequenceVal = fromString(new Serializer(Serializer.Scheme.FAST_JSON).serialize(instance));
+        PutResponse putResponse = kv.put(sequenceKey, sequenceVal, putOption).get();
         log.info(putResponse.toString());
     }
 
@@ -62,14 +68,22 @@ public class KVer<T extends AbstractInstance> {
         kv.delete(fromString(key)).get();
     }
 
-    public Set<T> getAll(Class<T> targetClass) throws ExecutionException, InterruptedException {
+    public Set<T> getAll(Class<T> targetClass) {
         ByteSequence key = fromString("\0");
         GetOption getOption = GetOption.newBuilder()
                 .withRange(fromString("\0"))
                 .withPrefix(fromString(ServiceKeyPrefix.prefix))
                 .build();
         CompletableFuture<GetResponse> future = kv.get(key, getOption);
-        List<KeyValue> keyValueList = future.get().getKvs();
+        GetResponse getResponse = null;
+        try {
+            getResponse = future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
+        if (null == getResponse) return null;
+        List<KeyValue> keyValueList = getResponse.getKvs();
         if (CollectionUtils.isEmpty(keyValueList)) return null;
         else {
             Set<T> instances = new HashSet<>();
