@@ -5,7 +5,7 @@ import com.angee.etcd.balanced.BalancedStrategy;
 import com.angee.etcd.balanced.algorithm.BalancedAlgorithm;
 import com.angee.etcd.bean.AbstractInstance;
 import com.angee.etcd.bean.Instance;
-import com.angee.etcd.consts.ServiceKeyPrefix;
+import com.angee.etcd.consts.KeyDirectory;
 import com.angee.etcd.health.AutoRefresh;
 import com.angee.etcd.jetcd.KVer;
 import com.angee.etcd.jetcd.Watcher;
@@ -80,7 +80,7 @@ public class DiscoveryImpl implements Discovery<Instance>, AutoRefresh {
 
     //TODO need test
     void listenAll() {
-        this.listen(ServiceKeyPrefix.prefix, listener());
+        this.listen(KeyDirectory.First.SERVICE, listener());
     }
 
     public void listen(String commonServiceNamePrefix, Watch.Listener listener) {
