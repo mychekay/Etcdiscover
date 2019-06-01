@@ -1,6 +1,7 @@
 package com.angee.discover;
 
 import com.angee.etcd.balanced.BalancedStrategy;
+import com.angee.etcd.balanced.algorithm.BalancedAlgorithm;
 import com.angee.etcd.bean.Instance;
 import com.angee.etcd.core.Discovery;
 import com.angee.etcd.exception.NotFoundServiceException;
@@ -22,8 +23,24 @@ public class EtcdDiscover<T, R> {
         this.discovery = discovery;
     }
 
+    public ResponseEntity<R> post(String serviceName, String uri, T t, Class<R> responseType) throws NotFoundServiceException {
+        Instance instance = discovery.discover(serviceName, BalancedStrategy.RANDOM);
+        if (instance == null)
+            throw new NotFoundServiceException("not found service " + serviceName);
+        String url = Protocol.HTTP.getHead() + instance.getHost() + ":" + instance.getPort() + uri;
+        return restTemplate.postForEntity(url, t, responseType);
+    }
+
     public ResponseEntity<R> post(String serviceName, String uri, T t, Class<R> responseType, BalancedStrategy balancedStrategy) throws NotFoundServiceException {
         Instance instance = discovery.discover(serviceName, balancedStrategy);
+        if (instance == null)
+            throw new NotFoundServiceException("not found service " + serviceName);
+        String url = Protocol.HTTP.getHead() + instance.getHost() + ":" + instance.getPort() + uri;
+        return restTemplate.postForEntity(url, t, responseType);
+    }
+
+    public ResponseEntity<R> post(String serviceName, String uri, T t, Class<R> responseType, BalancedAlgorithm balancedAlgorithm) throws NotFoundServiceException {
+        Instance instance = discovery.discover(serviceName, balancedAlgorithm);
         if (instance == null)
             throw new NotFoundServiceException("not found service " + serviceName);
         String url = Protocol.HTTP.getHead() + instance.getHost() + ":" + instance.getPort() + uri;
