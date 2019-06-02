@@ -2,7 +2,7 @@ package com.angee.etcd.core;
 
 import com.angee.etcd.anntotation.NoBug;
 import com.angee.etcd.bean.Instance;
-import com.angee.etcd.consts.ServiceKeyPrefix;
+import com.angee.etcd.consts.KeyDirectory;
 import com.angee.etcd.jetcd.KVer;
 import com.angee.etcd.jetcd.Leaser;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,7 @@ public class RegisterImpl implements Register<Instance> {
     public boolean register(String serviceName, Instance instance) {
         try {
             long leaseID = leaser.grant(ttl);
-            kVer.put(ServiceKeyPrefix.prefix + serviceName, instance, leaseID);
+            kVer.put(KeyDirectory.First.SERVICE + serviceName, instance, leaseID);
             this.keepLease(leaseID);
             return true;
         } catch (Exception e) {
@@ -45,7 +45,7 @@ public class RegisterImpl implements Register<Instance> {
     @Override
     public boolean update(String serviceName, Instance instance) {
         try {
-            kVer.put(ServiceKeyPrefix.prefix + serviceName, instance);
+            kVer.put(KeyDirectory.First.SERVICE + serviceName, instance);
             return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -56,7 +56,7 @@ public class RegisterImpl implements Register<Instance> {
     @Override
     public boolean unReg(String serviceName, Instance instance) {
         try {
-            kVer.delete(ServiceKeyPrefix.prefix + serviceName);
+            kVer.delete(KeyDirectory.First.SERVICE + serviceName);
             return true;
         } catch (ExecutionException | InterruptedException e) {
             log.error(e.getMessage(), e);

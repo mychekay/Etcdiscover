@@ -2,7 +2,8 @@ package com.angee.etcd.balanced.algorithm;
 
 import com.angee.etcd.bean.AbstractInstance;
 
-import java.util.Collection;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 /**
  * Copyright© 2019
@@ -11,5 +12,5 @@ import java.util.Collection;
  */
 @FunctionalInterface
 public interface BalancedAlgorithm {
-    AbstractInstance apply(String serviceName, Collection<AbstractInstance> instances);
+    AbstractInstance apply(Object reqParams, List<AbstractInstance> instances) throws NoSuchAlgorithmException;
 }

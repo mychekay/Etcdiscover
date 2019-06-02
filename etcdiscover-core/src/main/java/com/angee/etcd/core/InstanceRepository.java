@@ -5,9 +5,7 @@ import com.angee.etcd.bean.AbstractInstance;
 import lombok.NonNull;
 
 import javax.annotation.concurrent.NotThreadSafe;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Copyright© 2019
@@ -16,43 +14,56 @@ import java.util.Set;
  */
 @NotThreadSafe
 public class InstanceRepository extends AbstractRepository {
-    private Set<AbstractInstance> instanceSet = new HashSet<>(32);
-    private String serviceName = "";
+    private String serviceName;
+    private List<AbstractInstance> instanceList;
+    private Set<AbstractInstance> instanceSet;
 
     public InstanceRepository(String serviceName) {
+        this(serviceName, new ArrayList<>(12));
+    }
+
+    public InstanceRepository(String serviceName, Collection<? extends AbstractInstance> instances) {
         this.serviceName = serviceName;
+        this.instanceList = new ArrayList<>(instances);
+        this.instanceSet = new HashSet<>(16);
     }
 
     @Override
     public boolean add(@NonNull AbstractInstance instance) {
-        instanceSet.add(instance);
+        if (instanceSet.add(instance)) {
+            instanceList.add(instance);
+        }
         return true;
     }
 
     @Override
     public boolean addAll(Collection<AbstractInstance> instances) {
         instanceSet.addAll(instances);
-        return false;
+        instanceList = new ArrayList<>(instanceSet);
+        return true;
     }
 
     @Override
     public boolean remove(@NonNull AbstractInstance instance) {
-        instanceSet.remove(instance);
+        if (instanceSet.remove(instance)) {
+            instanceList.remove(instance);
+        }
         return true;
     }
 
     @Override
     public AbstractInstance findByAlgorithm(String serviceName, BalancedAlgorithm balancedAlgorithm) {
-        return balancedAlgorithm.apply(serviceName, instanceSet);
+        return balancedAlgorithm.apply(serviceName, instanceList);
     }
 
     @Override
     public Collection<AbstractInstance> findAll(String serviceName) {
-        return instanceSet;
+        return instanceList;
     }
 
     @Override
     public String getServiceName() {
         return this.serviceName;
     }
+
 }

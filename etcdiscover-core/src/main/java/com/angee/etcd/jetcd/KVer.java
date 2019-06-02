@@ -1,7 +1,7 @@
 package com.angee.etcd.jetcd;
 
 import com.angee.etcd.bean.AbstractInstance;
-import com.angee.etcd.consts.ServiceKeyPrefix;
+import com.angee.etcd.consts.KeyDirectory;
 import com.angee.etcd.util.Serializer;
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.KV;
@@ -72,7 +72,7 @@ public class KVer<T extends AbstractInstance> {
         ByteSequence key = fromString("\0");
         GetOption getOption = GetOption.newBuilder()
                 .withRange(fromString("\0"))
-                .withPrefix(fromString(ServiceKeyPrefix.prefix))
+                .withPrefix(fromString(KeyDirectory.First.SERVICE))
                 .build();
         CompletableFuture<GetResponse> future = kv.get(key, getOption);
         GetResponse getResponse = null;

@@ -5,7 +5,7 @@ import com.angee.etcd.balanced.BalancedStrategy;
 import com.angee.etcd.balanced.algorithm.BalancedAlgorithm;
 import com.angee.etcd.bean.AbstractInstance;
 import com.angee.etcd.bean.Instance;
-import com.angee.etcd.consts.ServiceKeyPrefix;
+import com.angee.etcd.consts.KeyDirectory;
 import com.angee.etcd.health.AutoRefresh;
 import com.angee.etcd.jetcd.KVer;
 import com.angee.etcd.jetcd.Watcher;
@@ -47,9 +47,9 @@ public class DiscoveryImpl implements Discovery<Instance>, AutoRefresh {
         this.listenAll();
     }
 
-    private void updateInstancesTb(Collection<Instance> instances) {
-        if (null == instances) return;
-        for (AbstractInstance instance : instances) {
+    private void updateInstancesTb(Collection<Instance> allInstances) {
+        if (null == allInstances) return;
+        for (AbstractInstance instance : allInstances) {
             this.instanceTable.compute(instance.getServiceName(), (serviceName, repository) -> {
                 if (repository == null) repository = new InstanceRepository(serviceName);
                 repository.add(instance);
@@ -71,7 +71,7 @@ public class DiscoveryImpl implements Discovery<Instance>, AutoRefresh {
     @Override
     public Instance discover(String serviceName, BalancedStrategy balancedStrategy) {
         try {
-            return (Instance) this.instanceTable.get(serviceName).findByAlgorithm(serviceName, balancedStrategy.getAlgorithmHandler());
+            return (Instance) this.instanceTable.get(serviceName).findByAlgorithm(serviceName, balancedStrategy.getBalancedAlgorithm());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return null;
@@ -80,7 +80,7 @@ public class DiscoveryImpl implements Discovery<Instance>, AutoRefresh {
 
     //TODO need test
     void listenAll() {
-        this.listen(ServiceKeyPrefix.prefix, listener());
+        this.listen(KeyDirectory.First.SERVICE, listener());
     }
 
     public void listen(String commonServiceNamePrefix, Watch.Listener listener) {

@@ -1,8 +1,10 @@
 package com.angee.etcd.balanced.algorithm;
 
 import com.angee.etcd.bean.AbstractInstance;
+import com.angee.etcd.util.HashFunction;
 
-import java.util.Collection;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 /**
  * Copyright© 2019
@@ -20,7 +22,9 @@ public class Hash implements BalancedAlgorithm {
     }
 
     @Override
-    public AbstractInstance apply(String serviceName, Collection<AbstractInstance> instances) {
-        return null;
+    public AbstractInstance apply(Object reqParams, List<AbstractInstance> instances) throws NoSuchAlgorithmException {
+        long hashcode = HashFunction.hash(reqParams.toString());
+        return instances.get((int) (hashcode % instances.size()));
     }
+
 }

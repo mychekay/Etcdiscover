@@ -2,6 +2,7 @@ package com.angee.etcd.bean;
 
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Objects;
 import io.etcd.jetcd.KeyValue;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,4 +61,19 @@ public abstract class AbstractInstance {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AbstractInstance)) return false;
+        AbstractInstance that = (AbstractInstance) o;
+        return port == that.port &&
+                Objects.equal(instanceID, that.instanceID) &&
+                Objects.equal(host, that.host) &&
+                Objects.equal(serviceName, that.serviceName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(instanceID, host, port, serviceName);
+    }
 }
