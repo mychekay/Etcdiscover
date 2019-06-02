@@ -12,7 +12,7 @@ public enum BalancedStrategy {
     /**
      * 轮询
      */
-    POLL(Poll.getInstance()),
+    ROUND(Round.getInstance()),
 
     /**
      * 随机

@@ -47,9 +47,9 @@ public class DiscoveryImpl implements Discovery<Instance>, AutoRefresh {
         this.listenAll();
     }
 
-    private void updateInstancesTb(Collection<Instance> instances) {
-        if (null == instances) return;
-        for (AbstractInstance instance : instances) {
+    private void updateInstancesTb(Collection<Instance> allInstances) {
+        if (null == allInstances) return;
+        for (AbstractInstance instance : allInstances) {
             this.instanceTable.compute(instance.getServiceName(), (serviceName, repository) -> {
                 if (repository == null) repository = new InstanceRepository(serviceName);
                 repository.add(instance);

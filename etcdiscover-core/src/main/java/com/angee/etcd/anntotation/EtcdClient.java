@@ -16,5 +16,5 @@ import java.lang.annotation.*;
 public @interface EtcdClient {
     String serviceName() default "";
 
-    BalancedStrategy balancedStrategy() default BalancedStrategy.POLL;
+    BalancedStrategy balancedStrategy() default BalancedStrategy.ROUND;
 }

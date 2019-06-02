@@ -7,16 +7,15 @@ import java.util.List;
 /**
  * Copyright© 2019
  * Author jie.han
- * Created on 2019-05-30
+ * Created on 2019-06-02
  */
-public class ConsistentHash implements BalancedAlgorithm {
-    private static ConsistentHash ourInstance = new ConsistentHash();
+public class Weighted implements BalancedAlgorithm{
 
-    public static ConsistentHash getInstance() {
-        return ourInstance;
-    }
+    private static Weighted ourInstance = new Weighted();
 
-    private ConsistentHash() {
+    public static Weighted getInstance() { return ourInstance; }
+
+    private Weighted() {
     }
 
     @Override

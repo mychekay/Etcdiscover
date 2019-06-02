@@ -1,10 +1,8 @@
 package com.angee.etcd.balanced.algorithm;
 
 import com.angee.etcd.bean.AbstractInstance;
-import com.angee.etcd.bean.Instance;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 /**
  * Copyright© 2019
@@ -22,14 +20,8 @@ public class Random implements BalancedAlgorithm {
     }
 
     @Override
-    public Instance apply(String serviceName, Collection<AbstractInstance> instances) {
+    public AbstractInstance apply(Object reqParams, List<AbstractInstance> instances) {
         int randomIndex = new java.util.Random().nextInt(instances.size());
-        Iterator<AbstractInstance> instanceIterator = instances.iterator();
-        AbstractInstance target = null;
-        while (instanceIterator.hasNext()) {
-            target = instanceIterator.next();
-            if (randomIndex-- == 0) break;
-        }
-        return (Instance) target;
+        return instances.get(randomIndex);
     }
 }

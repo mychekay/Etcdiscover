@@ -24,7 +24,7 @@ public class EtcdDiscover<T, R> {
     }
 
     public ResponseEntity<R> post(String serviceName, String uri, T t, Class<R> responseType) throws NotFoundServiceException {
-        Instance instance = discovery.discover(serviceName, BalancedStrategy.RANDOM);
+        Instance instance = discovery.discover(serviceName, BalancedStrategy.ROUND);
         if (instance == null)
             throw new NotFoundServiceException("not found service " + serviceName);
         String url = Protocol.HTTP.getHead() + instance.getHost() + ":" + instance.getPort() + uri;

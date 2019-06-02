@@ -2,7 +2,7 @@ package com.angee.etcd.balanced.algorithm;
 
 import com.angee.etcd.bean.AbstractInstance;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Copyright© 2019
@@ -20,7 +20,8 @@ public class Hash implements BalancedAlgorithm {
     }
 
     @Override
-    public AbstractInstance apply(String serviceName, Collection<AbstractInstance> instances) {
-        return null;
+    public AbstractInstance apply(Object reqParams, List<AbstractInstance> instances) {
+        int hashcode = reqParams.hashCode();
+        return instances.get(hashcode % instances.size());
     }
 }
