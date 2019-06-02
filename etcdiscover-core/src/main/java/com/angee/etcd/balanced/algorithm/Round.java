@@ -34,27 +34,27 @@ public class Round implements BalancedAlgorithm {
         private LongAdder mark;
         private long bound;
 
-        public Mark(int start) {
+        Mark(int start) {
             this(start, Integer.MAX_VALUE);
         }
 
-        public Mark(int start, long bound) {
+        Mark(int start, long bound) {
             this.mark = new LongAdder();
             mark.add(start);
             this.bound = bound;
         }
 
-        public int intValue() {
+        int intValue() {
             return mark.intValue();
         }
 
-        public void increment() {
+        void increment() {
             mark.increment();
             if (mark.longValue() >= bound)
                 mark.reset();
         }
 
-        public synchronized int getIntValAndIncrement() {
+        synchronized int getIntValAndIncrement() {
             int ret = intValue();
             increment();
             return ret;

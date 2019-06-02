@@ -1,4 +1,4 @@
-package com.angee.etcd.properties;
+package com.angee.etcd.config;
 
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.options.WatchOption;

@@ -6,9 +6,12 @@ import com.angee.etcd.balanced.algorithm.BalancedAlgorithm;
 import com.angee.etcd.bean.AbstractInstance;
 import com.angee.etcd.bean.Instance;
 import com.angee.etcd.consts.KeyDirectory;
+import com.angee.etcd.exception.DeserializeException;
 import com.angee.etcd.health.AutoRefresh;
 import com.angee.etcd.jetcd.KVer;
 import com.angee.etcd.jetcd.Watcher;
+import com.angee.etcd.util.serialize.Scheme;
+import com.angee.etcd.util.serialize.SerializerFactory;
 import io.etcd.jetcd.Watch;
 import io.etcd.jetcd.watch.WatchEvent;
 import io.etcd.jetcd.watch.WatchResponse;
@@ -71,7 +74,7 @@ public class DiscoveryImpl implements Discovery<Instance>, AutoRefresh {
     @Override
     public Instance discover(String serviceName, BalancedStrategy balancedStrategy) {
         try {
-            return (Instance) this.instanceTable.get(serviceName).findByAlgorithm(serviceName, balancedStrategy.getAlgorithmHandler());
+            return (Instance) this.instanceTable.get(serviceName).findByAlgorithm(serviceName, balancedStrategy.getBalancedAlgorithm());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return null;
@@ -90,20 +93,24 @@ public class DiscoveryImpl implements Discovery<Instance>, AutoRefresh {
     private Watch.Listener listener() {
         Consumer<WatchResponse> onNext = watchResponse -> {
             for (WatchEvent watchEvent : watchResponse.getEvents()) {
-                Instance instance = AbstractInstance.fromByteSequence(watchEvent.getKeyValue(), Instance.class);
-                if (instance == null) continue;
-                if (watchEvent.getEventType() == WatchEvent.EventType.PUT) {
-                    instanceTable.compute(instance.getServiceName(), (serviceName, repository) -> {
-                        if (null == repository) repository = new InstanceRepository(serviceName);
-                        repository.add(instance);
-                        return repository;
-                    });
-                }
-                if (watchEvent.getEventType() == WatchEvent.EventType.DELETE) {
-                    instanceTable.computeIfPresent(instance.getServiceName(), (serviceName, repository) -> {
-                        repository.remove(instance);
-                        return repository;
-                    });
+                try {
+                    Instance instance = SerializerFactory.create(Scheme.FAST_JSON).deserialize(watchEvent.getKeyValue().getValue().getBytes(), Instance.class);
+                    if (instance == null) continue;
+                    if (watchEvent.getEventType() == WatchEvent.EventType.PUT) {
+                        instanceTable.compute(instance.getServiceName(), (serviceName, repository) -> {
+                            if (null == repository) repository = new InstanceRepository(serviceName);
+                            repository.add(instance);
+                            return repository;
+                        });
+                    }
+                    if (watchEvent.getEventType() == WatchEvent.EventType.DELETE) {
+                        instanceTable.computeIfPresent(instance.getServiceName(), (serviceName, repository) -> {
+                            repository.remove(instance);
+                            return repository;
+                        });
+                    }
+                } catch (DeserializeException e) {
+                    log.error(e.getMessage(), e);
                 }
             }
         };

@@ -2,7 +2,8 @@ package com.angee.etcd.jetcd;
 
 import com.angee.etcd.bean.AbstractInstance;
 import com.angee.etcd.consts.KeyDirectory;
-import com.angee.etcd.util.Serializer;
+import com.angee.etcd.exception.DeserializeException;
+import com.angee.etcd.util.serialize.SerializerFactory;
 import io.etcd.jetcd.ByteSequence;
 import io.etcd.jetcd.KV;
 import io.etcd.jetcd.KeyValue;
@@ -20,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static com.angee.etcd.util.ByteSequenceUtil.fromString;
+import static com.angee.etcd.util.serialize.Scheme.FAST_JSON;
 
 /**
  * Copyright© 2019
@@ -42,7 +44,7 @@ public class KVer<T extends AbstractInstance> {
                 .withPrevKV()
                 .build();
         ByteSequence sequenceKey = fromString(key);
-        ByteSequence sequenceVal = fromString(new Serializer(Serializer.Scheme.FAST_JSON).serialize(instance));
+        ByteSequence sequenceVal = fromString(SerializerFactory.create(FAST_JSON).serialize(instance));
         PutResponse putResponse = kv.put(sequenceKey, sequenceVal, putOption).get();
         log.info(putResponse.toString());
     }
@@ -56,7 +58,7 @@ public class KVer<T extends AbstractInstance> {
                 .withPrevKV()
                 .build();
         ByteSequence sequenceKey = fromString(key);
-        ByteSequence sequenceVal = fromString(new Serializer(Serializer.Scheme.FAST_JSON).serialize(instance));
+        ByteSequence sequenceVal = fromString(SerializerFactory.create(FAST_JSON).serialize(instance));
         PutResponse putResponse = kv.put(sequenceKey, sequenceVal, putOption).get();
         log.info(putResponse.toString());
     }
@@ -88,7 +90,13 @@ public class KVer<T extends AbstractInstance> {
         else {
             Set<T> instances = new HashSet<>();
             for (KeyValue keyValue : keyValueList) {
-                T instance = AbstractInstance.fromByteSequence(keyValue, targetClass);
+                T instance = null;
+                try {
+                    instance = SerializerFactory.create(FAST_JSON).deserialize(keyValue.getValue().getBytes(), targetClass);
+                } catch (DeserializeException e) {
+                    log.error(e.getMessage(), e);
+                    continue;
+                }
                 if (instance == null) continue;
                 instances.add(instance);
             }

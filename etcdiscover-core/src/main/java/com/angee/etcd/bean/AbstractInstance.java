@@ -1,9 +1,6 @@
 package com.angee.etcd.bean;
 
-import com.alibaba.fastjson.JSONException;
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Objects;
-import io.etcd.jetcd.KeyValue;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
@@ -50,15 +47,6 @@ public abstract class AbstractInstance {
 
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
-    }
-
-    public static <T> T fromByteSequence(KeyValue keyValue, Class<T> classType) {
-        try {
-            return JSONObject.parseObject(keyValue.getValue().getBytes(), classType);
-        } catch (JSONException e) {
-            log.error(e.getMessage(), e);
-            return null;
-        }
     }
 
     @Override

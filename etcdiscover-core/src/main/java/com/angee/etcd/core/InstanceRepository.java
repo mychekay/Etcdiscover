@@ -2,6 +2,7 @@ package com.angee.etcd.core;
 
 import com.angee.etcd.balanced.algorithm.BalancedAlgorithm;
 import com.angee.etcd.bean.AbstractInstance;
+import com.angee.etcd.exception.NoSuchAlgorithmException;
 import lombok.NonNull;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -52,7 +53,7 @@ public class InstanceRepository extends AbstractRepository {
     }
 
     @Override
-    public AbstractInstance findByAlgorithm(String serviceName, BalancedAlgorithm balancedAlgorithm) {
+    public AbstractInstance findByAlgorithm(String serviceName, BalancedAlgorithm balancedAlgorithm) throws NoSuchAlgorithmException {
         return balancedAlgorithm.apply(serviceName, instanceList);
     }
 

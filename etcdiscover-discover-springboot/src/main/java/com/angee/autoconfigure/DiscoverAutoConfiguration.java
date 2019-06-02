@@ -21,15 +21,15 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @AllArgsConstructor
-@Import({ServerPropertiesBean.class, DiscoveryImpl.DiscoverHealthCheckConfig.class})
+@Import({DiscoverClientProperties.class, DiscoveryImpl.DiscoverHealthCheckConfig.class})
 public class DiscoverAutoConfiguration {
-    private final ServerPropertiesBean serverPropertiesBean;
+    private final DiscoverClientProperties properties;
     private final DiscoveryImpl.DiscoverHealthCheckConfig discoverHealthCheckConfig;
 
     @Bean
     @ConditionalOnMissingBean(Client.class)
     public Client client() {
-        return Client.builder().endpoints(serverPropertiesBean.getEndpoints()).build();
+        return Client.builder().endpoints(properties.getServer().getEndpoints()).build();
     }
 
     @Bean

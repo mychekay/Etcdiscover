@@ -2,6 +2,7 @@ package com.angee.etcd.core;
 
 import com.angee.etcd.balanced.algorithm.BalancedAlgorithm;
 import com.angee.etcd.bean.AbstractInstance;
+import com.angee.etcd.exception.NoSuchAlgorithmException;
 
 import java.util.Collection;
 
@@ -17,7 +18,7 @@ public interface Repository {
 
     boolean remove(AbstractInstance instance);
 
-    AbstractInstance findByAlgorithm(String serviceName, BalancedAlgorithm balancedAlgorithm);
+    AbstractInstance findByAlgorithm(String serviceName, BalancedAlgorithm balancedAlgorithm) throws NoSuchAlgorithmException;
 
     Collection<AbstractInstance> findAll(String serviceName);
 }
