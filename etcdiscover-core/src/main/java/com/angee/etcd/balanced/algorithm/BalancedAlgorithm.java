@@ -2,6 +2,7 @@ package com.angee.etcd.balanced.algorithm;
 
 import com.angee.etcd.bean.AbstractInstance;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
@@ -11,5 +12,5 @@ import java.util.List;
  */
 @FunctionalInterface
 public interface BalancedAlgorithm {
-    AbstractInstance apply(Object reqParams, List<AbstractInstance> instances);
+    AbstractInstance apply(Object reqParams, List<AbstractInstance> instances) throws NoSuchAlgorithmException;
 }

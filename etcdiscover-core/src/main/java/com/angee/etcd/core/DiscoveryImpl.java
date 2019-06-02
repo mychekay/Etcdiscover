@@ -71,7 +71,7 @@ public class DiscoveryImpl implements Discovery<Instance>, AutoRefresh {
     @Override
     public Instance discover(String serviceName, BalancedStrategy balancedStrategy) {
         try {
-            return (Instance) this.instanceTable.get(serviceName).findByAlgorithm(serviceName, balancedStrategy.getAlgorithmHandler());
+            return (Instance) this.instanceTable.get(serviceName).findByAlgorithm(serviceName, balancedStrategy.getBalancedAlgorithm());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return null;

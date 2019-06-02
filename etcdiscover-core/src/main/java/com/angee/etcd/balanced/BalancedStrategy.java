@@ -1,7 +1,6 @@
 package com.angee.etcd.balanced;
 
 import com.angee.etcd.balanced.algorithm.*;
-import lombok.Getter;
 
 /**
  * Copyright© 2019
@@ -13,6 +12,11 @@ public enum BalancedStrategy {
      * 轮询
      */
     ROUND(Round.getInstance()),
+
+    /**
+     *
+     */
+    WEIGHTED(Weighted.getInstance()),
 
     /**
      * 随机
@@ -29,14 +33,13 @@ public enum BalancedStrategy {
      */
     CONSITENT_HASH(ConsistentHash.getInstance());
 
-    @Getter
     private BalancedAlgorithm balancedAlgorithm;
 
     BalancedStrategy(BalancedAlgorithm balancedAlgorithm) {
         this.balancedAlgorithm = balancedAlgorithm;
     }
 
-    public BalancedAlgorithm getAlgorithmHandler() {
-        return this.getBalancedAlgorithm();
+    public BalancedAlgorithm getBalancedAlgorithm() {
+        return balancedAlgorithm;
     }
 }
