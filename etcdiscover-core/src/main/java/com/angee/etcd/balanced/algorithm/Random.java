@@ -1,6 +1,6 @@
 package com.angee.etcd.balanced.algorithm;
 
-import com.angee.etcd.bean.AbstractInstance;
+import com.angee.etcd.core.instance.AbstractInstance;
 
 import java.util.List;
 

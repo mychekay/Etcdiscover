@@ -1,6 +1,6 @@
-package com.angee.starter;
+package com.angee;
 
-import com.angee.etcd.bean.Instance;
+import com.angee.etcd.core.instance.Instance;
 import com.angee.etcd.core.Register;
 import com.angee.etcd.util.IPUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -18,12 +18,11 @@ import java.util.Set;
  * Author jie.han
  * Created on 2019-05-28
  */
-public class Bootstrap implements InitializingBean {
-
+public class EtcdProvider implements InitializingBean {
     private Register<Instance> register;
     private Environment environment;
 
-    public Bootstrap(Register<Instance> register, Environment environment) {
+    public EtcdProvider(Register<Instance> register, Environment environment) {
         this.register = register;
         this.environment = environment;
     }

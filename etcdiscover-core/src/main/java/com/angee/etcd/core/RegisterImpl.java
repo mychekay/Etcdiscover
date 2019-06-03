@@ -1,7 +1,7 @@
 package com.angee.etcd.core;
 
 import com.angee.etcd.anntotation.NoBug;
-import com.angee.etcd.bean.Instance;
+import com.angee.etcd.core.instance.Instance;
 import com.angee.etcd.consts.KeyDirectory;
 import com.angee.etcd.jetcd.KVer;
 import com.angee.etcd.jetcd.Leaser;

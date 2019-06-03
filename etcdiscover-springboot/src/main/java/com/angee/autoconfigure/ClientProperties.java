@@ -6,6 +6,7 @@ import com.angee.etcd.config.ServerProperties;
 import com.angee.etcd.config.WatchProperties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,13 +16,29 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-@ConfigurationProperties(prefix = "etcdiscover.discover.client")
-public class DiscoverClientProperties {
+@ConfigurationProperties(prefix = "etcdiscover.client")
+public class ClientProperties {
+    /**
+     * etcd server config
+     */
+    @NestedConfigurationProperty
     private ServerProperties server;
 
+    /**
+     * etcd kv config
+     */
+    @NestedConfigurationProperty
     private KVProperties kv;
 
+    /**
+     * etcd lease config
+     */
+    @NestedConfigurationProperty
     private LeaseProperties lease;
 
+    /**
+     * etcd watch config
+     */
+    @NestedConfigurationProperty
     private WatchProperties watch;
 }

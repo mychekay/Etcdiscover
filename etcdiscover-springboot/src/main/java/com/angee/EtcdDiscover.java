@@ -1,8 +1,8 @@
-package com.angee.discover;
+package com.angee;
 
 import com.angee.etcd.balanced.BalancedStrategy;
 import com.angee.etcd.balanced.algorithm.BalancedAlgorithm;
-import com.angee.etcd.bean.Instance;
+import com.angee.etcd.core.instance.Instance;
 import com.angee.etcd.core.Discovery;
 import com.angee.etcd.exception.NotFoundServiceException;
 import lombok.Getter;

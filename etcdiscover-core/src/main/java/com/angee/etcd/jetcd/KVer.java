@@ -1,6 +1,6 @@
 package com.angee.etcd.jetcd;
 
-import com.angee.etcd.bean.AbstractInstance;
+import com.angee.etcd.core.instance.AbstractInstance;
 import com.angee.etcd.consts.KeyDirectory;
 import com.angee.etcd.exception.DeserializeException;
 import com.angee.etcd.util.serialize.SerializerFactory;

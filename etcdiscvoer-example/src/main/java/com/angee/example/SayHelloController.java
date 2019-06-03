@@ -1,6 +1,6 @@
 package com.angee.example;
 
-import com.angee.discover.EtcdDiscover;
+import com.angee.EtcdDiscover;
 import com.angee.etcd.exception.NotFoundServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

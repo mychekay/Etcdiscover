@@ -1,8 +1,10 @@
 package com.angee.annotation;
 
-import com.angee.autoconfigure.RegisterAutoConfiguration;
+import com.angee.EtcdDiscover;
+import com.angee.EtcdProvider;
+import com.angee.autoconfigure.ClientAutoConfiguration;
+import com.angee.autoconfigure.RestClientConfig;
 import com.angee.etcd.anntotation.NoBug;
-import com.angee.starter.Bootstrap;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -16,7 +18,7 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Import({RegisterAutoConfiguration.class, Bootstrap.class})
+@Import({ClientAutoConfiguration.class, RestClientConfig.class, EtcdDiscover.class, EtcdProvider.class})
 public @interface EnableEtcdClient {
     String serviceName() default "";
 }

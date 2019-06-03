@@ -1,0 +1,22 @@
+{
+  "groups": [
+    {
+      "name": "etcdiscover.provider.client",
+      "type": "com.angee.autoconfigure.ProviderClientProperties",
+      "sourceType": "com.angee.autoconfigure.ProviderClientProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "etcdiscover.provider.client.lease",
+      "type": "com.angee.etcd.config.LeaseProperties",
+      "sourceType": "com.angee.autoconfigure.ProviderClientProperties"
+    },
+    {
+      "name": "etcdiscover.provider.client.server",
+      "type": "com.angee.etcd.config.ServerProperties",
+      "sourceType": "com.angee.autoconfigure.ProviderClientProperties"
+    }
+  ],
+  "hints": []
+}

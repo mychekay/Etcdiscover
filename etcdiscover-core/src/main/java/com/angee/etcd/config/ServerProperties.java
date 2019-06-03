@@ -11,5 +11,64 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ServerProperties {
-    private String[] endpoints = {"http://47.100.170.216:2379"};
+    /**
+     * endpoints config
+     */
+    private String[] endpoints = {"http://localhost:2379"};
+
+    /**
+     * your etcd username
+     */
+    private String username;
+
+    /**
+     * your etcd password
+     */
+    private String password;
+
+    /**
+     * etcd client connection manager config
+     */
+    private ConnectionManager connectionPool = new ConnectionManager();
+
+    public static class ConnectionManager {
+        /**
+         * fixed thread pool max size
+         */
+        private int poolMaxSize = 100;
+
+        /**
+         * idle thread alive time
+         */
+        private long keepAliveTimeMillis = 60 * 1000;
+
+        /**
+         * threadpool task blocking queue size
+         */
+        private int blockingCapacity = 100;
+
+        public int getPoolMaxSize() {
+            return poolMaxSize;
+        }
+
+        public void setPoolMaxSize(int poolMaxSize) {
+            this.poolMaxSize = poolMaxSize;
+        }
+
+        public long getKeepAliveTimeMillis() {
+            return keepAliveTimeMillis;
+        }
+
+        public void setKeepAliveTimeMillis(long keepAliveTimeMillis) {
+            this.keepAliveTimeMillis = keepAliveTimeMillis;
+        }
+
+        public int getBlockingCapacity() {
+            return blockingCapacity;
+        }
+
+        public void setBlockingCapacity(int blockingCapacity) {
+            this.blockingCapacity = blockingCapacity;
+        }
+    }
 }
