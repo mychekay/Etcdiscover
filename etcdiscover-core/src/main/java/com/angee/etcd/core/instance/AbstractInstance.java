@@ -1,4 +1,4 @@
-package com.angee.etcd.bean;
+package com.angee.etcd.core.instance;
 
 import com.google.common.base.Objects;
 import lombok.extern.slf4j.Slf4j;

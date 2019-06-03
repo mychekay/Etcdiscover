@@ -1,7 +1,7 @@
 package com.angee.etcd.core;
 
 import com.angee.etcd.balanced.algorithm.BalancedAlgorithm;
-import com.angee.etcd.bean.AbstractInstance;
+import com.angee.etcd.core.instance.AbstractInstance;
 import com.angee.etcd.exception.NoSuchAlgorithmException;
 
 import java.util.Collection;

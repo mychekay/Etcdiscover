@@ -1,0 +1,26 @@
+{
+  "hints": [
+    {
+      "name": "etcdiscover.discover.client"
+    }
+  ],
+  "groups": [
+    {
+      "sourceType": "org.xavier.config.properties.MyProperties",
+      "name": "随便乱取",
+      "type": "org.xavier.config.properties.MyProperties"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "org.xavier.config.properties.MyProperties",
+      "name": "user.info.Name",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "org.xavier.config.properties.MyProperties",
+      "name": "user.info.age",
+      "type": "java.lang.Integer"
+    }
+  ]
+}

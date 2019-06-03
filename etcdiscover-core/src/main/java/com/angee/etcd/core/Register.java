@@ -1,6 +1,6 @@
 package com.angee.etcd.core;
 
-import com.angee.etcd.bean.AbstractInstance;
+import com.angee.etcd.core.instance.AbstractInstance;
 
 /**
  * Copyright© 2019
