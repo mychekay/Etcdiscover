@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.github.colorfulwolf</groupId>
         <artifactId>etcdiscover</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>etcdiscover-springboot</artifactId>
@@ -37,6 +37,12 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>1.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+            <version>${springboot.version}</version>
         </dependency>
     </dependencies>
 </project>

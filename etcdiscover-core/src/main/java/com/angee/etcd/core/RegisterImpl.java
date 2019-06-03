@@ -1,8 +1,8 @@
 package com.angee.etcd.core;
 
 import com.angee.etcd.anntotation.NoBug;
-import com.angee.etcd.core.instance.Instance;
 import com.angee.etcd.consts.KeyDirectory;
+import com.angee.etcd.core.instance.Instance;
 import com.angee.etcd.jetcd.KVer;
 import com.angee.etcd.jetcd.Leaser;
 import lombok.extern.slf4j.Slf4j;
@@ -22,24 +22,27 @@ public class RegisterImpl implements Register<Instance> {
     private KVer<Instance> kVer;
     private Leaser leaser;
     private long ttl;
+    private Timer heartbeat;
 
     public RegisterImpl(KVer<Instance> kVer, Leaser leaser, long ttl) {
         this.kVer = kVer;
         this.leaser = leaser;
         this.ttl = ttl;
+        this.heartbeat = new Timer(true);
     }
 
     @Override
     public boolean register(String serviceName, Instance instance) {
         try {
             long leaseID = leaser.grant(ttl);
-            kVer.put(KeyDirectory.First.SERVICE + serviceName, instance, leaseID);
-            this.keepLease(leaseID);
+            String key = KeyDirectory.buildDir(KeyDirectory.First.SERVICE, serviceName, instance.getInstanceID());
+            kVer.put(key, instance, leaseID);
+            this.keepLease(leaseID, key, serviceName, instance);
             return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            return false;
         }
-        return false;
     }
 
     @Override
@@ -64,19 +67,26 @@ public class RegisterImpl implements Register<Instance> {
         return false;
     }
 
-    private boolean keepLease(long leaseID) {
-        //续租
-        Timer timer = new Timer(true);
-        timer.scheduleAtFixedRate(new TimerTask() {
+    private boolean keepLease(long leaseID, String key, String serviceName, Instance instance) {
+        TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
                 try {
-                    leaser.keepAliveOnce(leaseID);
+                    Instance instantOne = kVer.get(key, Instance.class);
+                    if (instantOne != null)
+                        leaser.keepAliveOnce(leaseID);
+                    else {
+                        this.cancel();
+                        RegisterImpl.this.heartbeat.purge();
+                        register(serviceName, instance);
+                    }
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }
             }
-        }, ttl * 1000 / 2, ttl * 1000 / 2);
+        };
+        //续租
+        heartbeat.scheduleAtFixedRate(timerTask, ttl * 1000 / 2, ttl * 1000 / 2);
         return true;
     }
 

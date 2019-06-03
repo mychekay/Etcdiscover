@@ -3,15 +3,15 @@ package com.angee.etcd.core;
 import com.angee.etcd.anntotation.NoBug;
 import com.angee.etcd.balanced.BalancedStrategy;
 import com.angee.etcd.balanced.algorithm.BalancedAlgorithm;
+import com.angee.etcd.consts.KeyDirectory;
 import com.angee.etcd.core.instance.AbstractInstance;
 import com.angee.etcd.core.instance.Instance;
-import com.angee.etcd.consts.KeyDirectory;
-import com.angee.etcd.exception.DeserializeException;
 import com.angee.etcd.health.AutoRefresh;
 import com.angee.etcd.jetcd.KVer;
 import com.angee.etcd.jetcd.Watcher;
 import com.angee.etcd.util.serialize.Scheme;
 import com.angee.etcd.util.serialize.SerializerFactory;
+import io.etcd.jetcd.KeyValue;
 import io.etcd.jetcd.Watch;
 import io.etcd.jetcd.watch.WatchEvent;
 import io.etcd.jetcd.watch.WatchResponse;
@@ -81,9 +81,8 @@ public class DiscoveryImpl implements Discovery<Instance>, AutoRefresh {
         }
     }
 
-    //TODO need test
     void listenAll() {
-        this.listen(KeyDirectory.First.SERVICE, listener());
+        this.listen(KeyDirectory.buildDir(KeyDirectory.First.SERVICE), listener());
     }
 
     public void listen(String commonServiceNamePrefix, Watch.Listener listener) {
@@ -94,22 +93,25 @@ public class DiscoveryImpl implements Discovery<Instance>, AutoRefresh {
         Consumer<WatchResponse> onNext = watchResponse -> {
             for (WatchEvent watchEvent : watchResponse.getEvents()) {
                 try {
-                    Instance instance = SerializerFactory.create(Scheme.FAST_JSON).deserialize(watchEvent.getKeyValue().getValue().getBytes(), Instance.class);
-                    if (instance == null) continue;
                     if (watchEvent.getEventType() == WatchEvent.EventType.PUT) {
+                        KeyValue keyValue = watchEvent.getKeyValue();
+                        Instance instance = SerializerFactory.create(Scheme.FAST_JSON).deserialize(keyValue.getValue().getBytes(), Instance.class);
+                        if (instance == null) continue;
                         instanceTable.compute(instance.getServiceName(), (serviceName, repository) -> {
                             if (null == repository) repository = new InstanceRepository(serviceName);
                             repository.add(instance);
                             return repository;
                         });
-                    }
-                    if (watchEvent.getEventType() == WatchEvent.EventType.DELETE) {
+                    } else if (watchEvent.getEventType() == WatchEvent.EventType.DELETE) {
+                        KeyValue prevKeyVal = watchEvent.getPrevKV();
+                        Instance instance = SerializerFactory.create(Scheme.FAST_JSON).deserialize(prevKeyVal.getValue().getBytes(), Instance.class);
+                        if (instance == null) continue;
                         instanceTable.computeIfPresent(instance.getServiceName(), (serviceName, repository) -> {
                             repository.remove(instance);
                             return repository;
                         });
                     }
-                } catch (DeserializeException e) {
+                } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }
             }
@@ -131,7 +133,7 @@ public class DiscoveryImpl implements Discovery<Instance>, AutoRefresh {
 
     public static class DiscoverHealthCheckConfig {
         private long delay = 0;
-        private long period = 10 * 1000;
+        private long period = 15 * 1000;
 
         public long getDelay() {
             return delay;

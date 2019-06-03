@@ -14,5 +14,5 @@ public class LeaseProperties {
     /**
      * lease ttl seconds
      */
-    private long ttl = 30;
+    private long ttl = 60;
 }

@@ -1,5 +1,6 @@
 package com.angee.autoconfigure;
 
+import com.angee.autoconfigure.properties.RestClientProperties;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;

@@ -1,5 +1,7 @@
 package com.angee.autoconfigure;
 
+import com.angee.autoconfigure.properties.ClientProperties;
+import com.angee.autoconfigure.properties.HealthCheckPropBean;
 import com.angee.etcd.config.ServerProperties;
 import com.angee.etcd.core.Discovery;
 import com.angee.etcd.core.DiscoveryImpl;
@@ -27,10 +29,10 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @AllArgsConstructor
-@Import({ClientProperties.class, DiscoveryImpl.DiscoverHealthCheckConfig.class})
+@Import({ClientProperties.class, HealthCheckPropBean.class})
 public class ClientAutoConfiguration {
     private final ClientProperties properties;
-    private final DiscoveryImpl.DiscoverHealthCheckConfig discoverHealthCheckConfig;
+    private final HealthCheckPropBean healthCheckPropBean;
 
     @Bean
     @ConditionalOnMissingBean(Client.class)
@@ -83,7 +85,7 @@ public class ClientAutoConfiguration {
     @ConditionalOnBean({KVer.class, Watcher.class})
     @ConditionalOnMissingBean(Discovery.class)
     public Discovery discovery(KVer kv, Watcher watch) {
-        return new DiscoveryImpl(kv, watch, discoverHealthCheckConfig);
+        return new DiscoveryImpl(kv, watch, healthCheckPropBean);
     }
 
 }

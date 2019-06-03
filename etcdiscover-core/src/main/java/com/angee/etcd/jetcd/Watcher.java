@@ -21,6 +21,7 @@ public class Watcher {
         WatchOption watchOption = WatchOption.newBuilder()
                 .withRange(fromString("\0"))
                 .withPrefix(fromString(prefix))
+                .withPrevKV(true)
                 .build();
         this.watch.watch(fromString("\0"), watchOption, listener);
     }
