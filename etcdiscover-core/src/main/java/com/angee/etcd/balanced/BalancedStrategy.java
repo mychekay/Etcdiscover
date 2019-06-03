@@ -14,7 +14,7 @@ public enum BalancedStrategy {
     ROUND(Round.getInstance()),
 
     /**
-     *
+     * 权重轮询
      */
     WEIGHTED(Weighted.getInstance()),
 

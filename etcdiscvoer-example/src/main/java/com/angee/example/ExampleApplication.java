@@ -8,10 +8,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @EnableEtcdClient
 @EnableEtcdDiscover
-public class RegisterExampleApplication {
+public class ExampleApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(RegisterExampleApplication.class, args);
+        SpringApplication.run(ExampleApplication.class, args);
     }
 
 }

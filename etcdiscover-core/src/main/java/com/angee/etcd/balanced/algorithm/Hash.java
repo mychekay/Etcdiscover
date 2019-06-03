@@ -1,9 +1,9 @@
 package com.angee.etcd.balanced.algorithm;
 
 import com.angee.etcd.bean.AbstractInstance;
+import com.angee.etcd.exception.NoSuchAlgorithmException;
 import com.angee.etcd.util.HashFunction;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**

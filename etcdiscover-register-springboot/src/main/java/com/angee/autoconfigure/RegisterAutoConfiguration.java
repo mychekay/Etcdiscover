@@ -19,20 +19,18 @@ import org.springframework.context.annotation.Import;
  * Created on 2019-05-28
  */
 @Configuration("registerAutoConfiguration")
-@Import({KVPropertiesBean.class, LeasePropertiesBean.class, ServerPropertiesBean.class})
+@Import({ProviderClientProperties.class})
 public class RegisterAutoConfiguration {
-    private final ServerPropertiesBean serverPropertiesBean;
-    private final LeasePropertiesBean leasePropertiesBean;
+    private final ProviderClientProperties properties;
 
-    public RegisterAutoConfiguration(ServerPropertiesBean serverPropertiesBean, LeasePropertiesBean leasePropertiesBean) {
-        this.serverPropertiesBean = serverPropertiesBean;
-        this.leasePropertiesBean = leasePropertiesBean;
+    public RegisterAutoConfiguration(ProviderClientProperties providerClientProperties) {
+        this.properties = providerClientProperties;
     }
 
     @Bean
     @ConditionalOnMissingBean(Client.class)
     public Client client() {
-        return Client.builder().endpoints(serverPropertiesBean.getEndpoints()).build();
+        return Client.builder().endpoints(properties.getServer().getEndpoints()).build();
     }
 
     @Bean
@@ -53,7 +51,7 @@ public class RegisterAutoConfiguration {
     @ConditionalOnMissingBean(Register.class)
     public Register<Instance> register(KVer<Instance> kver,
                              Leaser leaser) {
-        return new RegisterImpl(kver, leaser, leasePropertiesBean.getTtl());
+        return new RegisterImpl(kver, leaser, properties.getLease().getTtl());
     }
 
 }

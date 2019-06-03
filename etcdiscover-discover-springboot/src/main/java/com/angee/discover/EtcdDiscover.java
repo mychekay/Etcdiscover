@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
  * Author jie.han
  * Created on 2019-05-28
  */
-public class EtcdDiscover<T, R> {
+public class EtcdDiscover {
     private final RestTemplate restTemplate;
     private final Discovery<Instance> discovery;
 
@@ -23,7 +23,7 @@ public class EtcdDiscover<T, R> {
         this.discovery = discovery;
     }
 
-    public ResponseEntity<R> post(String serviceName, String uri, T t, Class<R> responseType) throws NotFoundServiceException {
+    public <T, R> ResponseEntity<R> post(String serviceName, String uri, T t, Class<R> responseType) throws NotFoundServiceException {
         Instance instance = discovery.discover(serviceName, BalancedStrategy.ROUND);
         if (instance == null)
             throw new NotFoundServiceException("not found service " + serviceName);
@@ -31,7 +31,7 @@ public class EtcdDiscover<T, R> {
         return restTemplate.postForEntity(url, t, responseType);
     }
 
-    public ResponseEntity<R> post(String serviceName, String uri, T t, Class<R> responseType, BalancedStrategy balancedStrategy) throws NotFoundServiceException {
+    public <T, R> ResponseEntity<R> post(String serviceName, String uri, T t, Class<R> responseType, BalancedStrategy balancedStrategy) throws NotFoundServiceException {
         Instance instance = discovery.discover(serviceName, balancedStrategy);
         if (instance == null)
             throw new NotFoundServiceException("not found service " + serviceName);
@@ -39,7 +39,7 @@ public class EtcdDiscover<T, R> {
         return restTemplate.postForEntity(url, t, responseType);
     }
 
-    public ResponseEntity<R> post(String serviceName, String uri, T t, Class<R> responseType, BalancedAlgorithm balancedAlgorithm) throws NotFoundServiceException {
+    public <T, R> ResponseEntity<R> post(String serviceName, String uri, T t, Class<R> responseType, BalancedAlgorithm balancedAlgorithm) throws NotFoundServiceException {
         Instance instance = discovery.discover(serviceName, balancedAlgorithm);
         if (instance == null)
             throw new NotFoundServiceException("not found service " + serviceName);
