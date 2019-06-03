@@ -1,7 +1,7 @@
 package com.angee.etcd.jetcd;
 
-import com.angee.etcd.core.instance.AbstractInstance;
 import com.angee.etcd.consts.KeyDirectory;
+import com.angee.etcd.core.instance.AbstractInstance;
 import com.angee.etcd.exception.DeserializeException;
 import com.angee.etcd.util.serialize.SerializerFactory;
 import io.etcd.jetcd.ByteSequence;
@@ -68,6 +68,20 @@ public class KVer<T extends AbstractInstance> {
             throw new NullPointerException("null key");
         }
         kv.delete(fromString(key)).get();
+    }
+
+    public T get(String key, Class<T> targetClass) {
+        ByteSequence sequenceKey = fromString(key);
+        GetOption getOption = GetOption.newBuilder().withLimit(1).build();
+        try {
+            GetResponse getResponse = kv.get(sequenceKey, getOption).get();
+            List<KeyValue> keyValueList = getResponse.getKvs();
+            if (CollectionUtils.isEmpty(keyValueList)) return null;
+            return SerializerFactory.create(FAST_JSON).deserialize(keyValueList.get(0).getValue().getBytes(), targetClass);
+        } catch (InterruptedException | ExecutionException | DeserializeException e) {
+            log.error(e.getMessage(), e);
+            return null;
+        }
     }
 
     public Set<T> getAll(Class<T> targetClass) {
