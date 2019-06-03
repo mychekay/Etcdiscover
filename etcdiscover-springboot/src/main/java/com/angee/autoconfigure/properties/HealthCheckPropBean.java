@@ -1,4 +1,4 @@
-package com.angee.autoconfigure;
+package com.angee.autoconfigure.properties;
 
 import com.angee.etcd.core.DiscoveryImpl;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,5 +11,5 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConfigurationProperties(prefix = "etcd.discover.healthcheck")
-public class DiscoverHealthCheckConfigBean extends DiscoveryImpl.DiscoverHealthCheckConfig {
+public class HealthCheckPropBean extends DiscoveryImpl.DiscoverHealthCheckConfig {
 }

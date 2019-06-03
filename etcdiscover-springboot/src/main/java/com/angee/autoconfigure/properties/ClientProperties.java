@@ -1,12 +1,11 @@
-package com.angee.autoconfigure;
+package com.angee.autoconfigure.properties;
 
-import com.angee.etcd.config.KVProperties;
 import com.angee.etcd.config.LeaseProperties;
 import com.angee.etcd.config.ServerProperties;
-import com.angee.etcd.config.WatchProperties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,29 +15,19 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
+@Import({ServerProperties.class, LeaseProperties.class})
 @ConfigurationProperties(prefix = "etcdiscover.client")
 public class ClientProperties {
     /**
      * etcd server config
      */
     @NestedConfigurationProperty
-    private ServerProperties server;
-
-    /**
-     * etcd kv config
-     */
-    @NestedConfigurationProperty
-    private KVProperties kv;
+    private ServerProperties server = new ServerProperties();
 
     /**
      * etcd lease config
      */
     @NestedConfigurationProperty
-    private LeaseProperties lease;
+    private LeaseProperties lease = new LeaseProperties();
 
-    /**
-     * etcd watch config
-     */
-    @NestedConfigurationProperty
-    private WatchProperties watch;
 }
