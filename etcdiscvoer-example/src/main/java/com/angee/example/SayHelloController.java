@@ -1,7 +1,6 @@
 package com.angee.example;
 
 import com.angee.discover.EtcdDiscover;
-import com.angee.etcd.balanced.BalancedStrategy;
 import com.angee.etcd.exception.NotFoundServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,7 @@ public class SayHelloController {
 
     @GetMapping("/sayHello")
     public ResponseEntity<String> sayHello() throws NotFoundServiceException {
-        return etcdDiscover.post("etcdiscover-example", "/hello", null, String.class, BalancedStrategy.RANDOM);
+        return etcdDiscover.post("etcdiscover-example", "/hello", null, String.class);
     }
 
 }
